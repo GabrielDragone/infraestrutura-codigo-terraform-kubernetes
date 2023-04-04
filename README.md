@@ -50,3 +50,28 @@ https://cursos.alura.com.br/course/infraestrutura-codigo-terraform-kubernetes
    * Mas nem sempre poderemos fazer isso, pois nossos clientes precisam da aplicação up e não podemos derruba-la. Nesse caso teríamos que subir uma infra completa separada e depois fazer uma migração para termos o minimo possivel de downtime.
    * Removidos arquivos do ECS.tf, ALB.tf (Load Balancer), IAM.tf. Podemos usar o terraform aply pra manter o projeto local o mais parecido com o que ta em cloud (essa parte não foi explicada mto bem).
    * Remover o código que não será mais utilizado, sempre executando o comando terraform destroy antes ou o terraform apply após a modificação.
+### 2. Módulo do EKS:
+2. Alterando o G.S:
+   * Grupo de Segurança.
+   * Pra usarmos o Kubernetes, precisaremos montar um cluster.
+   * Um cluster é um conjunto de máquinas em que nossas instâncias do Kubernetes vai ficar.
+     * Nodes/nós são as máquinas que estamos executando em nosso cluster.
+   * Realizamos alterações dentro de GrupoSecuranca.tf.
+3. Faça como eu fiz: configurações do grupo de segurança:
+   * SSH/22, HTTP/80, HTTPS/443, FTP/20-21 são protocolos e portas mais comuns para acessarmos as máquinas via SSH, fazermos requisições via HTTP e HTTPS ou acessar arquivos via FTP.
+4. Módulo do EKS:
+   * Acessar Registry dentro do Terraform e pesquisar por EKS: https://registry.terraform.io/?product_intent=terraform
+   * https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
+   * Pegamos o Usage e criamos o EKS.tf.
+   * Retiramos o Self Managed e deixamos o EKS Managed Node para que o EKS monte nossas configurações.
+5. Para saber mais: exemplos muito grandes:
+   * Quando copiamos o exemplo do Modulo do Terraform, vieram diversos códigos que não utilizamos.
+   * É importante entendermos os mesmos para podermos limpar códigos desnecessários.
+6. Configurando o EKS:
+   * Realizadas mais configurações dentro do EKS.tf.
+   * Retirado códigos que não utilizaremos.
+7. Exemplo do EKS:
+   * Selecionar os campos com possíveis erros:
+   * ![img_1.png](img_1.png)
+     * instance_types, pois o tipo de máquina deveria estar em formato de texto e os campos deveriam estar entre colchetes, pois podemos utilizar mais de uma opçção.
+     * min_size e max_size, pois o min está maior que o max, o que pode causar erros e inconsistências.
