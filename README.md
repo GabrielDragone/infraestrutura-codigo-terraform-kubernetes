@@ -75,3 +75,34 @@ https://cursos.alura.com.br/course/infraestrutura-codigo-terraform-kubernetes
    * ![img_1.png](img_1.png)
      * instance_types, pois o tipo de máquina deveria estar em formato de texto e os campos deveriam estar entre colchetes, pois podemos utilizar mais de uma opçção.
      * min_size e max_size, pois o min está maior que o max, o que pode causar erros e inconsistências.
+### 3. Configurando outro provedor:
+2. Subindo o Cluster:
+   * O ideal é subir por etapas pra evitar efeitos/problemas em cascatas.
+   * Acessar o env/prod e rodar o "terraform init".
+   * Isso vai realizar as configurações iniciais, baixar modulos necessários, configurar o backend no s3 e tudo que é necessário pra montar a infra no cloud.
+   * Deu erro.
+   * Realizamos a criação da chave na AWS e utilizamos o comando aws configure.
+   * Criei o bucket terraform-gabriel-example do Backend pois o init informava que era necessário criar primeiro.
+   * Alterei as regiões para us-east.
+   * Rodei o "terraform init -reconfigure" e deu certo.
+   * Retirada algumas configurações do Main. Retirada as variaveis de Variaveis.tf tbm. Tive que recriar a GrupoSeguranca igual está no github do alura.
+   * Para executar, digitar terraform apply e confirmar.
+   * Acessar o EKS no AWS e verificar se o cluster producao foi criado.
+     * Dentro teremos 3 nodes/nós prontas para serem utilizadas.
+4. Dois provedores:
+   * Trabalhar com dois provedores de recursos no Terraform, a AWS, que provê a infraestrutura e o Kubernetes, que a configura para a aplicação.
+   * Para nos comunicar com o cluster que criamos, precisaremos do cluster_endpoint_private_access.
+   * Pra isso precisaremos utilizar um outro provedor do Kubernetes.
+   * Examples: https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs
+   * https://github.com/hashicorp/terraform-provider-kubernetes/blob/main/_examples/eks/README.md
+   * Inserida configuração dentro do Provider do exemplo pego acima no main.tf.
+5. Para saber mais: trabalhando com múltiplos provedores:
+   * Para o Terraform, um provedor é uma maneira de se comunicar com alguma ferramenta externa, podendo ser a AWS, o Google, o Kubernetes ou uma API que aceite requisições HTTP.
+6. Data sources:
+   * Dentro do Provider, temos os data, é disso que estamos falando.
+   * Usar os Data Sources, que funcionam como fonte de dados da nossa infraestrutura, para recursos já existentes ou que acabamos de criar.
+   * Fonte de Dados que podemos utilizar pra obter informações de nossos recursos.
+   * Conseguimos pegar os dados do cluster, como nome, id, arn (amazon resource name), qnd foi criado, etc.
+7. Obtendo dados:
+   * Ana está tentando obter o ID de uma subnet que criou em eu-central-1a usando os data sources. Para isso, ela desenvolveu alguns códigos possíveis e precisa de ajuda para descobrir qual deles está correto. Também trouxe a documentação do data source da aws_subnet para consultar, caso necessário.
+   * ![img_2.png](img_2.png)
