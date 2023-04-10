@@ -106,3 +106,50 @@ https://cursos.alura.com.br/course/infraestrutura-codigo-terraform-kubernetes
 7. Obtendo dados:
    * Ana está tentando obter o ID de uma subnet que criou em eu-central-1a usando os data sources. Para isso, ela desenvolveu alguns códigos possíveis e precisa de ajuda para descobrir qual deles está correto. Também trouxe a documentação do data source da aws_subnet para consultar, caso necessário.
    * ![img_2.png](img_2.png)
+### 4. Preparando a aplicação:
+2. Substituindo o YAML:
+   * Quando preparamos aplicações pra serem executadas no Kubernetes, existem duas formas:
+     * Imperativa: Através de comandos executados em sequências.
+     * Declarativa: Através de arquivos .json ou .yaml.
+   * No Terraform só trabalhamos em forma declarativa.
+   * Precisamos por nossa aplicação dentro do pod no Kubernetes.
+   * Pesquisaremos dentro do site do terraform > registry > kubernetes > documentation: https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment
+   * Criado arquivo Kubernetes.tf e nele que são feitas as configurações da aplicação que será feito deploy.
+   * Como não subi nenhuma imagem, estou usando uma do repositório do docker.
+3. Outra aplicação:
+   * Análise de código incorretos:
+     ```sh
+      match_labels = {
+        test = "nginx:1.7.8"
+      }
+     e
+     repository = "nginx:1.7.8"
+     ```
+   * Estão errados pois o match_labels deve ter uma label que já foi criada em alguma outra parte do código.
+   * E o campo que devemos colocar o container a ser utilizado á o image. O campo repository não pode ser usado dentro do container.
+4. Verificação de saúde:
+   * liveness_probe nos ajuda a ver qual o estado atual da nossa aplicação, se está travada ou respondendo às requisições normalmente.
+   * É como se fosse um health check que usamos no Bitbucket/GCP.
+   * Nele podemos configurar o path do endpoint e de quanto em quanto tempo ele vai ser verificado, além da verificação inicial.
+   * É importante verificar se a nossa aplicação é demorada pra subir ou mto pesada, pra não ficar fazendo muitas requisições.
+   * O tempo ideal é entre 3 a 15 segundos, pois caso a aplicação caia, não demore muito pra matarmos um pod e subir novamente.
+5. Para saber mais: Liveness Probe:
+   * Kubernetes tem várias maneiras de verificar se um container está sendo executado, sendo a principal o uso de sondas ou probres.
+   * Essas sondas podem realizar a validação através de 3 formas:
+     * Comando com retorno 0.
+     * Requisição HTTP com retorno entre 200 e 400.
+     * Conexão TCP, verificando se a porta desejada está aberta.
+   * De preferência utilizaremos a forma que o cliente irá utilizar. 
+     * Ou seja, se for uma API, usar opção HTTP.
+     * Se for algo relacionado a abnco, algum comando que intereja com o banco.
+     * Ou se for proxy, a TCP.
+   * Mais info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+6. Testando o Kubernetes:
+   * Abrir env/prod e rodar o "terraform init" pra initilizar o terraform.
+   * cmd "terraform apply" pra comparar o que temos atualmente e o que queremos criar pra ver as diferenças.
+   * Digitar 1 pra yes.
+   * Entrar no AWS e verificar o EKS.
+   * Visão geral aparecem as 3 máquinas que estão sendo executadas.
+   * Em cargas de trabalho temos a aplicação em execução:
+   ![img_3.png](img_3.png)
+   * Se o namespace estiver com kube-system, significa que foi o Kubernetes que criou. Default foi feito de forma externa.
