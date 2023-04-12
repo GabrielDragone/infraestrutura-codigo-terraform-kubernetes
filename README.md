@@ -52,7 +52,7 @@ https://cursos.alura.com.br/course/infraestrutura-codigo-terraform-kubernetes
    * Remover o código que não será mais utilizado, sempre executando o comando terraform destroy antes ou o terraform apply após a modificação.
 ### 2. Módulo do EKS:
 2. Alterando o G.S:
-   * Grupo de Segurança.
+   * Grupo de Segurança para darmos acesso ao nosso Cluster no EKS.
    * Pra usarmos o Kubernetes, precisaremos montar um cluster.
    * Um cluster é um conjunto de máquinas em que nossas instâncias do Kubernetes vai ficar.
      * Nodes/nós são as máquinas que estamos executando em nosso cluster.
@@ -153,3 +153,28 @@ https://cursos.alura.com.br/course/infraestrutura-codigo-terraform-kubernetes
    * Em cargas de trabalho temos a aplicação em execução:
    ![img_3.png](img_3.png)
    * Se o namespace estiver com kube-system, significa que foi o Kubernetes que criou. Default foi feito de forma externa.
+### 5. Load Balancer:
+2. Criando o Load Balancer:
+   * É uma técnica utilizada para disponibilizar uma URL de acesso à aplicação e manter a estabilidade de um servidor quando o tráfego ou volume de dados é muitro grande.
+   * O Load Balancer tenta evitar que ocorra uma sobrecarga e melhora o desempenho do sistema, distribuindo as solicitações e dados dos usuários entre diferentes servidores.
+   * Com nossa aplicação no ar, precisaremos acessar a mesma. Para isso, precisaremos criar um Load Balancer.
+   * Como estamos utilizando um Kubernetes, para criarmos, não poderemos criar diretamente na AWS.
+   * Procurar por service no registry do kubernetes dentro do terraform: https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service
+   * Adicionada nova configuração dentro de Kubernetes.tf.
+4. Criando outro Load Balancer:
+   * ![img_4.png](img_4.png)
+   * ![img_5.png](img_5.png)
+5. Testando o projeto:
+   * Com todas as partes prontas, agora iremos subir novamente a aplicação pra ver se ela está como o esperado.
+   * cd env/prod/.
+   * terraform apply. Vai verificar as diferenças, daremos o yes e o LoadBalancer será criado.
+   * Dentro do Console AWS, procuraremos pelo EC2 > Load Balancer. https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#LoadBalancers:
+   * Copiamos o endereço do DNS:
+   * ![img_6.png](img_6.png)
+   * Acessar informando a porta :8000.
+   * Para não termos que ficar procurando essa URL acima a todo momento, criamos um data source dentro de Kubernetes.tf chamado nomeDNS.
+   * Atrelamos ele com uma saida dentro do mesmo arquivo e no Main.tf.
+   * Rodamos novamente o terraform apply e no console o projeto vai informar a URL.
+10. Conclusão:
+    * Revisão do curso.
+    * Fim!

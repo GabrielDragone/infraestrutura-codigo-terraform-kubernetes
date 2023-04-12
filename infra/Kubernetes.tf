@@ -58,3 +58,32 @@ resource "kubernetes_deployment" "Django-API" {
     }
   }
 }
+
+# Kubernetes vai ser responsável por criar esse Load Balancer:
+resource "kubernetes_service" "LoadBalancer" {
+  metadata {
+    name = "load-balancer-django-api"
+  }
+  spec { # Espeficicações do recurso.
+    selector = {
+      match_labels = {
+        nome = "django" # Especificamos qual aplicação irá utilizar esse Load Balancer.
+      }
+    }
+    port {
+      port        = 8000 # Porta da máquina
+      target_port = 8000 # Porta do nosso container
+    }
+    type = "LoadBalancer"
+  }
+}
+
+data "kubernetes_service" "nomeDNS" { # Nome de DNS que vamos usar pra acessar a aplicação
+  metadata {
+    name = "load-balancer-django-api" # Essa fonta de dados está atrelada ao LoadBalancer acima através do metadata.
+  }
+}
+
+output "URL" { # Saída (cadastrar no Main.tf)
+  value = data.kubernetes_service.nomeDNS.status #
+}
